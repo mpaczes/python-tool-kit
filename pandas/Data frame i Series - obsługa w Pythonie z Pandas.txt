@@ -46,7 +46,36 @@ Opracowane na podstawie informacji ze strony 'https://www.youtube.com/watch?v=zm
 	df.loc['JohnDoe@email.com']
 	df.loc['JohnDoe@email.com', 'last']
 	# ale nie możemy się już odwoływać do wiersza po indeksie liczbowym (od zera)	
-	df.rest_index(inplace=True)		# resetowanie indeksu do liczbowego
+	df.reset_index(inplace=True)		# resetowanie indeksu do liczbowego
 	
-(3) ..
+	schema_df.loc['Hobbyist']
+	schema_df.loc['Hobbyist', 'QuestionText']
+	schema_df.sort_index()
+	schema_df.sort_index(inplace=True)	# sortowanie dotyczy całęgo Data frame
+	schema_df.sort_index(ascending=False)
+	
+(3) Filtering - Using Conditionals to Filter Rows and Columns :
 
+	filt = (df['last'] == 'Doe')		# zwraca obiekt typu Series - filter mask
+	
+	df[filt]	# zwraca tabelę, czyli DF
+	df[df['last'] == 'Doe']		# jw
+	
+	df.loc[filt, 'email']
+	
+	# and -> &, or -> |
+	filt = (df['last'] == 'Doe') & (df['first'] == 'John')
+	filt = (df['last'] == 'Doe') | (df['first'] == 'John')
+	
+	df.loc[~filt, 'email']	# tylda - negacja filtra
+	
+	high_salary = (df['ConvertedComp'] > 70000)
+	df.loc[high_salary]
+	df.loc[high_salary, ['Country', 'LanguageWorkedWith', 'ConvertedComp']]
+
+	countries = ['United States', 'India', 'United Kingdom', 'Germany', 'Canada']
+	filt = df['Country'].isin(countries)
+	df.loc[filt, 'Country']
+	
+	filt = df['LanguageWorkedWith'].str.contains('Python', na=False)
+	df.loc[filt, 'LanguageWorkedWith']
