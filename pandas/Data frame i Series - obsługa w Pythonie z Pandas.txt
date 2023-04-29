@@ -1,0 +1,52 @@
+
+Python i Pandas.
+
+Opracowane na podstawie informacji ze strony 'https://www.youtube.com/watch?v=zmdjNSmRXF4&list=PL-osiE80TeTsWmV9i9c58mdDCSskIFdDS&index=2'.
+
+(1) Na przykładzie danych z katalogu 'data' - Data Frame and Series :
+
+	import pandas as pd
+	
+	df = pd.read_csv('data/survey_results_public.csv')
+	schema_df = pd.read_csv('data/survey_results_schema.csv')
+	
+	pd.set_option('display.max_columns', 85)
+	pd.set_option('display.max_rows', 85)
+	
+	df.shape	# liczba kolumn i wierszy
+	
+	df.columns
+	
+	df['Hobbyist']	# wiersze w kolumnie 'Hobbyist'
+	
+	df.loc[0]	# pierwszy wiersz
+	df.loc[0, 'Hobbyist']	# jw z pierszwą kolumną
+	df.loc[[0,1,2], 'Hobbyist']
+	df.loc[0:2, 'Hobbyist']		# jw - columns slice (zakres)
+	df.loc[0:2, 'Hobbyist':'Employment']	# columns and rows slice
+	
+(2)  Indexes - How to Set, Reset, and Use Indexes :
+
+	import pandas as pd
+	
+	# słownik Pythona
+	people = {
+		'first' : ['Jane', 'John'],
+		'last' : ['Doe', 'Doe'],
+		'email' : ['JaneDoe@email.com', 'JohnDoe@email.com']
+	}
+	
+	df = pd.DataFrame(people)
+	df	
+	df['email']
+	df.set_index('email')	# utworzenie indeksu na kolumnie 'email'
+	df.set_index('email', inplace=True)
+	df.index	# indeksy są etykietami dla wierszy
+	# po utworzeniu indeksu mozna się odwołać do wiersza tak :
+	df.loc['JohnDoe@email.com']
+	df.loc['JohnDoe@email.com', 'last']
+	# ale nie możemy się już odwoływać do wiersza po indeksie liczbowym (od zera)	
+	df.rest_index(inplace=True)		# resetowanie indeksu do liczbowego
+	
+(3) ..
+
