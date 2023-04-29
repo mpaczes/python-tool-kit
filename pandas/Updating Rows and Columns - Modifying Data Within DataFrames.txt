@@ -1,0 +1,74 @@
+
+(1) Dane początkowe :
+
+	import pandas as pd
+	
+	# słownik Pythona
+	people = {
+		'first' : ['Jane', 'John'],
+		'last' : ['Doe', 'Doe'],
+		'email' : ['JaneDoe@email.com', 'JohnDoe@email.com']
+	}
+	
+	df = pd.DataFrame(people)
+
+(2) Przykłady użycia - aktualizacja kolumn:
+
+	df.columns
+	
+	df.columns = ['first_name', 'last_name', 'email']
+	
+	df.columns
+	
+	# list comprehensions
+	df.columns = [x.upper() for x in df.columns]
+	
+	df.columns = df.columns.str.replace(' ', '_')
+	
+	df.rename(columns = {'first_name' : 'first', 'last_name' : 'last'}, inplace=True)
+	
+(3) Aktualizacja jednego wiersza :
+
+	df.loc[2] = ['John', 'Smith', 'JohnSMith@email.com']	# dodanie nowego wiersza do DF
+	
+	df.loc[2, ['last', 'email']] = ['Doe', 'JohnDoe@email.com']
+	
+	df.loc[2, 'last'] = 'Smith'
+	
+	df.at[2, 'last'] = 'Smith'	# jw - mało używane
+	
+(4) Aktualizacja kilku wierszy :
+
+	df['email'].str.lower()
+	
+	df['email'] = df['email'].str.lower()
+	
+(5) metody : apply (działa na Series), map (działa na Series), applymap (działa na DF), replace :
+
+	df['email'].apply(len)	# liczy liczbę znaków w adresie email
+	
+	# definicja funkcji
+	def update_email(email):
+		return email.upper()
+		
+	df['email'].apply(update_email)
+	
+	df['email'] = df['email'].apply(update_email)
+	df
+	
+	df['email'] = df['email'].apply(lambda x: x.lower())	# wyrażenie lambda
+	
+	df.apply(pd.Series.min)		# z każdej kolumny wybiera minimalną wartość
+	df.apply(lambda x: x.min())		# x oznacza Series - jw
+	
+	# applymap działa tlyko na Data frame
+	df.applymap(len)	# na każdej wartości z DF woła funkcję len
+	df.applymap(str.lower)
+	
+	df['first'].map({'Jane' : 'Mary', 'John' : 'Jefrey'})	# to czego nie mam w map zamienia się na wartość Nan
+
+	df['first'] = df['first'].replace({'Jane' : 'Mary', 'John' : 'Jefrey'})	# nie ma efektu ubocznego z Nan
+	
+	df['Hobbyist'] = df['Hobbyist'].map({'Yes' : True, 'No' : False})
+	
+	
