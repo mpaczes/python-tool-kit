@@ -1,0 +1,105 @@
+
+(1) przykładowy Dockerfile :
+
+	'Dockerfile' - nazwa pliku
+	
+	zawartość pliku 'Dockerfile' :
+	
+		FROM node:alpine
+		COPY . /app
+		WORKDIR /app
+		CMD node app.js
+
+(2) jak zbudować obraz :
+
+	docker build -t hello-docker .
+
+		czyli :
+		
+			-t -->> opcja użycia aliasu dla obrazu
+			
+			hello-docker -->> nazwa obrazu
+			
+			. -->> gdzie szukać pliku 'Dockerfile'
+
+(3) lista wszystkich obrazów :
+
+	docker image ls
+
+(4) uruchomienie obrazu :
+
+	docker run hello-docker
+	
+(5) lista uruchomionych kontenerów :
+
+	docker ps
+	
+	lista wszystkich kontenerów, czyli zatrzymanych również :
+	
+		docker ps -a
+	
+(6) uruchomienie kontenera w trybie interaktywnym :
+
+	docker run -it ubuntu
+	
+	pojawi się okno konsoli kontenera i możemy napisać :
+	
+		echo hello
+		
+		whoami
+		
+		echo $0 -> pokaże /bin/bash
+		
+		history
+
+(7) cytaty : 
+
+	'CONTAINER is a running environment for IMAGE'
+	
+	'port binded : talk to application running inside of container'
+	
+(8) 'dockerhub' zawiera tylko obrazy
+
+(9) przypadek użycia komend :
+
+	docker pull <NAZWA OBRAZU>
+	docker images
+	docker run <NAZWA OBRAZU> # ściąga obraz i go uruchamia
+	docker ps
+	docker ps -a # pokazuje także zatrzymane kontenery
+	docker run -d <NAZWA OBRAZU> # startowanie kontenera w trybie odłączonym (dettached mode)
+	docker stop <ID KONTENERA>
+	docker start <ID KONTENERA> # startuje zatrzymany kontener
+	docker run -d -p<HOST Port>:<CONTAINER Port> --name <NAZWA KONTENERA> <NAZWA OBRAZU> # uruchamia kontener pod jakąś nazwą
+
+(10) CONTAINER Port vs HOST Port :
+
+	some-app://localhost:3001
+	
+		Port 3001	-- port hosta (laptopa)
+						||
+						||
+						\/
+		Port 3000 	-- port kontenera Dockera
+		
+	docker run -p<port of the host>:<port of the container>
+	docker run -p6000:6379 # przykład
+
+(11) debugging containers :
+
+	docker logs <ID KONTENERA>
+	
+	docker exec -it <ID KONTENERA> /bin/bash # jeżeli kontener ma zainstalowanego basha
+	docker exec -it <ID KONTENERA> /bin/sh # jeżeli kontener nie ma zainstalowanego basha
+	
+	oto co możemy sprawdzić po dostaniu się do środka kontenera (komendy powłoki, czyli linii poleceń) :
+	
+		env
+		pwd
+		ls
+	
+	
+(12) usuwanie kontenera :
+
+	docker rm <ID KONTENERA> # usuwa kontener
+	docker rmi <NAZWA OBRAZU> # usuwa obraz
