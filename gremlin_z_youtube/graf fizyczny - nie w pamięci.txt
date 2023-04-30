@@ -1,0 +1,41 @@
+
+// Gremlin - graf fizyczny (nie w pamięci) - tworzenie wierzchołków i gałęzi -> https://gist.github.com/bassem-mf/bf072ea48748a2e26ca6adbb55000d1d
+
+// Create an empty graph database
+
+graph = TinkerGraph.open()
+
+// Create the TraversalSource
+
+g = graph.traversal()
+
+// Create the "person" vertex and assign it to "v1"
+
+v1 = g.addV('person')\
+      .property(id, 1)\
+      .property('name', 'marko')\
+      .property('age', 29)\
+      .next()
+
+// Create the "software" vertex and assign it to "v2"
+
+v2 = g.addV('software')\
+      .property(id, 3)\
+      .property('name', 'lop')\
+      .property('lang', 'java')\
+      .next()
+
+// Create the "created" edge from "v1" to "v2"
+
+g.addE('created')\
+ .from(v1)\
+ .to(v2)\
+ .property(id, 9)\
+ .property('weight', 0.4)
+
+// Get the name of the software created by "marko"
+
+g.V()\
+ .has('person', 'name', 'marko')\
+ .out('created')\
+ .values('name')

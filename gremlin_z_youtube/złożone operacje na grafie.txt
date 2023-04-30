@@ -1,0 +1,72 @@
+
+// Gremlin - złożone operacje na grafie -> https://gist.github.com/bassem-mf/62e0fdeb46bf105e9013bdc767ae3c73
+
+// Create an instance of the "Modern" toy graph and the traversal source in
+// one command
+
+g = TinkerFactory.createModern().traversal()
+
+// Get the "age" values of the two "person"s named "vadas" and "marko"
+
+g.V()\
+ .has('person', 'name', within('vadas','marko'))\
+ .values('age')
+
+// Get the mean of the "age" values of the two "persons" named "vadas" and
+// "marko"
+
+g.V()\
+ .has('person', 'name', within('vadas','marko'))\
+ .values('age')\
+ .mean()
+
+// Get the "names" of the "persons" that "marko" "created" software with
+// (flawed version)
+
+g.V()\
+ .has('person', 'name', 'marko')\
+ .out('created')\
+ .in('created')\
+ .values('name')
+
+// Get the "names" of the "persons" that "marko" "created" software with
+// (good version)
+
+g.V()\
+ .has('person', 'name', 'marko')\
+ .as('exclude')\
+ .out('created')\
+ .in('created')\
+ .where(neq('exclude'))\
+ .values('name')
+
+// Place a Gremlin on every vertex in the graph then traverse out twice
+
+g.V()\
+ .out()\
+ .out()
+
+// Place a Gremlin on every vertex in the graph then traverse out twice then
+// get the paths
+
+g.V()\
+ .as('a')\
+ .out()\
+ .as('b')\
+ .out()\
+ .as('c')\
+ .select('a', 'b', 'c')
+
+// Group all the vertices in the graph by their label
+
+g.V()\
+ .group()\
+ .by(label)
+
+// Group all the vertices in the graph by their label and use the "name"
+// property as the item value
+
+g.V()\
+ .group()\
+ .by(label)\
+ .by('name')
