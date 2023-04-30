@@ -1,0 +1,52 @@
+
+(1) Dane początkowe :
+
+	import pandas as pd
+	
+	# słownik Pythona
+	people = {
+		'first' : ['Jane', 'John', 'Adam'],
+		'last' : ['Doe', 'Doe', 'Doe'],
+		'email' : ['JaneDoe@email.com', 'JohnDoe@email.com', 'AdamDoe@email.com']
+	}
+	
+	df = pd.DataFrame(people)
+	
+(2) Przykładowe operacje :
+
+	df.sort_values(by='last')	# sortowanie po kolumnie 'last' alfabetycznie
+	df.sort_values(by='last', ascending=False)
+	
+	df.sort_values(by=['last', 'first'], ascending=False)
+    
+    df.sort_values(by=['last', 'first'], ascending=[False, True], inplace=True)
+    
+    df.sort_index()     # sortowanie po indeksie wiersza
+    
+    df['last'].sort_values()    # sortowanie kolumny czyli jednego Series
+    
+ (3) Operacje na danych z katalogu 'data' :
+ 
+    import pandas as pd
+	
+	df = pd.read_csv('data/survey_results_public.csv')
+	schema_df = pd.read_csv('data/survey_results_schema.csv')
+	
+	pd.set_option('display.max_columns', 85)
+	pd.set_option('display.max_rows', 85)
+    
+    df.sort_values(by='Country', inplace=True)
+    
+    df['Country'].head(50)  # pierwsze 50 wyników z DF
+    
+    df[['Country', 'ConvertedComp']].head(50)
+    
+    df.sort_values(by=['Country', 'ConvertedComp'], ascending=[True, False], inplace=True)
+    
+    df['ConvertedComp'].nlargest(10)    # 10 największych zarobków pokazanych w kolumnie
+  
+    df.nlargest(10, 'ConvertedComp')    # zwraca cały DF zamiast kolumny
+    
+    df.nsmallest(10, 'ConvertedComp')   # 10 najniższych zarobków
+  
+    
