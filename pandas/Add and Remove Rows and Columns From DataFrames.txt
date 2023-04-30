@@ -1,0 +1,54 @@
+
+(1) Dane początkowe :
+
+	import pandas as pd
+	
+	# słownik Pythona
+	people = {
+		'first' : ['Jane', 'John'],
+		'last' : ['Doe', 'Doe'],
+		'email' : ['JaneDoe@email.com', 'JohnDoe@email.com']
+	}
+	
+	df = pd.DataFrame(people)
+
+(2) Przykładowe operacje na kolumnach :
+
+	df['first'] + ' ' + df['last']	# jedna połączona kolumna
+	
+	df['full_name'] = df['first'] + ' ' + df['last']	# nowa kolumna
+	
+	df.drop(columns = ['first', 'last'])	# usuwa dwie kolumny
+	
+	df.drop(columns = ['first', 'last'], inplace=True)	# inplace robi zmiany w całym DF
+	df
+	
+	df['full_name'].str.split(' ')	# mamy listę
+	df['full_name'].str.split(' ', expand=True)	# zamiast listy mamy dwie kolumny z indeksami 0 i 1
+	
+	df[['first', 'last']] = df['full_name'].str.split(' ', expand=True)
+	
+(3) Przykładowe operacje na wierszach :
+
+	df.append({'first' : 'Tony'}, ignore_index=True	# pozostałe wartości wiersza mają wartość NaN
+	
+	people = {
+		'first' : ['Tony', 'Steve'],
+		'last' : ['Stark', 'Rogers'],
+		'email' : ['IronMan@avenge.com', 'Cap@avenge.com']
+	}
+	
+	df2 = pd.DataFrame(people)
+	
+	df.append(df2, ignore_index=True, sort=False)
+	
+	df = df.append(df2, ignore_index=True, sort=False)
+	
+	df.drop(index=4)	# usuwa wiersz z indeksem 4
+	
+	df.drop(index=df[df['last'] == 'Doe'].index)
+	
+	filt = df['last'] == 'Doe'
+	df.drop(index=df[filt].index)	# jw ale ze zdefiniowanym filtrem
+	
+	
