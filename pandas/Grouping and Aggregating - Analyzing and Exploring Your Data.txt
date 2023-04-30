@@ -1,0 +1,80 @@
+
+(1) Dane początkowe :
+
+	import pandas as pd
+	
+	df = pd.read_csv('data/survey_results_public.csv', index_col='Respondent')
+	schema_df = pd.read_csv('data/survey_results_schema.csv', index_col='Column')
+	
+	pd.set_option('display.max_columns', 85)
+	pd.set_option('display.max_rows', 85)
+	
+(2) Operacje na danych - ogólne dane statystyczne :
+
+	df.head()
+    
+    df['ConvertedComp'].head(15)
+    
+    df['ConvertedComp'].median()    # mediana zarobków - ignoruje wartości NaN
+    
+    df.median() # mediana dla kolumn z numerycznymi wartościami
+    
+    df.describe()   # szeroka analiza (obraz) danych statystycznych (zagregowanych) : count, mean, min, std, 25%, 50%, 75%, max
+    
+    df['ConvertedComp'].count()     # liczba wierszy w kolumnie
+    
+    df['Hobbyist'].value_counts()   # podział na wartości w kolumnie i zliczanie wierszy
+    
+    df['SocialMedia']
+    
+    schema_df.loc['SocialMedia']
+    
+    df['SocialMedia'].value_counts()    # unikatowe wartości w kolumnie
+
+    df['SocialMedia'].value_counts(normalize=True)  # wartości procentowe zamiast liczbowych
+    
+    df['Country'].value_counts()
+    
+(3) Grupowanie danych :
+
+    df.groupby(['Country'])     # zwraca taki typ : DataFrameGroupBy
+    
+    country_grp = df.groupby(['Country'])
+    country_grp.get_group('United States')
+    country_grp.get_group('India')
+    
+    filt = df['Country'] == 'United States'
+    df.loc[filt]
+    df.loc[filt]['SocialMedia'].value_counts()
+    
+    country_grp['SocialMedia'].value_counts().head(50)  # liczy wystąpienia w rozbiciu na Country i SocialMedia
+    
+    country_grp['SocialMedia'].value_counts().loc['United States'] # jw ale wyniki tylko dla 'United States'
+    country_grp['SocialMedia'].value_counts(normalize=True).loc['United States']    # wartości procentowe
+    
+    country_grp['ConvertedComp'].median()
+    country_grp['ConvertedComp'].median().loc['Germany']
+    country_grp['ConvertedComp'].agg(['median', 'mean'])    # lista funkcji agregujących
+    country_grp['ConvertedComp'].agg(['median', 'mean']).loc['Canada']
+    
+    filt = df['Country'] == 'India'
+    df.loc[filt]['LanguageWorkedWith'].str.contains('Python').sum() # suma
+    
+    country_grp['LanguageWorkedWith'].apply(lambda x: x.str.contaions('Python').sum())
+    
+    country_respondence = df['Country'].value_counts()
+    country_uses_python = country_grp['LanguageWorkedWith'].apply(lambda x: x.str.contaions('Python').sum())
+    country_uses_python
+    
+    python_df = pd.concat([country_respondence, country_uses_python], axis='columns', sort=False)
+    
+    python_df.rename(columns={'Country' : 'NumRespondents', 'LanguageWorkedWith' : 'NumKnowsPython'}, inplace=True)
+    
+    python_df['PctKnowsPython'] = (python_df['NumKnowsPython']/python_df['NumRespondents']) * 100
+    python_df
+    
+    python_df.sort_values(by='PctKnowsPython', ascending=False, inplace=True)
+    python_df.head(50)
+    
+    python_df.loc['Japan']
+    
