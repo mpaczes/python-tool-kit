@@ -1,0 +1,62 @@
+
+(1) Dane początkowe :
+
+    import pandas as pd
+    import numpy as np
+    
+    people = {
+        'first' : ['Jane', 'John', np.nan, None, 'NA'],
+        'last' : ['Doe', 'Doe', np.nan, np.nan, 'Missing'],
+        'email' : ['JaneDoe@email.com', 'JohnDoe@email.com', None, np.nan, 'NA'],
+        'age' : ['55', '63', None, None, 'Missing']
+    }
+    
+    df = pd.DataFrame(people)
+    df
+
+(2) Operacje na danych :
+
+	df.dropna() #   usuwa wiersze z brakującymi wartościami
+    df.dropna(axis='index', how='any')  # axis -> index albo columns, how -> kryterium do usuwania wartości (any albo all)
+    df.dropna(axis='columns', how='all')
+    
+    df.dropna(axis='index', how='any', subset=['email'])
+    df.dropna(axis='index', how='all', subset=['last', 'email'])
+    
+    df.replace('NA', np.nan, inplace=True   # zamienia na NaN wartość
+    df.replace('Missing', np.nan, inplace=True)
+    
+    df.isna()   # maska wartości True i False
+    
+    df.fillna('MISSING')
+    df.fillna(0)
+    
+(3) Casting data types :
+
+    df.dtypes   # nazwa kolumny -> typ
+    
+    type(np.nan)    # jest typu float
+    
+    df['age'] = df['age'].astype(float)   # jeżeli brakuje wartości to poleci błąd
+    df.dtypes
+    
+    df['age'].mean()    # zwróci 46.75
+    
+(4) Dane z katalogu 'data' :
+
+    na_vals = ['NA', 'Missing']
+    df = pd.read_csv('data/survey_results_public.csv', index_col = 'Respondent', na_values = na_vals)
+    
+    df['YearsCode'].head(10)
+    
+    df['YearsCode'] = df['YearsCode'].astype(float)
+    
+    df['YearsCode'].unique()    # unikatowe wartości w kolumnie
+    
+    df['YearsCode'].replace('Less than 1 year', 0, inplace=True)
+    df['YearsCode'].replace('More than 50 years', 51, inplace=True)
+    df['YearsCode'] = df['YearsCode'].astype(float)
+    
+    df['YearsCode'].mean()  # zwróci wartość11.6621142
+    df['YearsCode'].median()    # zwróci wartość 9.0
+    
