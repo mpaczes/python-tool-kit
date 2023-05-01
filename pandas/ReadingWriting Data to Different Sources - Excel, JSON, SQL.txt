@@ -1,0 +1,44 @@
+
+(1) Dane początkowe :
+
+	katalog 'data'
+
+(2) Operacje na danych :
+
+	filt = (df['Country'] == 'India')
+    india_df = df.loc[filt]
+    india_df.head()
+    
+    india_df.to_csv('data/modified.csv')
+    
+    india_df.to_csv('data/modified.tsv', sep='\t')
+    
+(3) JSON :
+
+    india_df.to_json('data/modified.json', orient='records', lines=True)
+    
+    test = pd.read_json('data/modified.json', orient='records', lines=True)
+    
+    test.head()
+    
+(4) SQL :
+
+    # musi istnieć baza danych np PostgreSQL i ORM
+    
+    pip install SQLAlchemy
+    pip install psycopg2-binary
+    
+    from sqlalchemy import create_engine
+    import psycopg2
+    
+    engine = create_engine('postgresql://dbuser:dbpass@localhost:5432/sample_db')
+    
+    india_df.to_sql('sample_table', engine, if_exists='replace')
+    
+    sql_df = pd.read_sql('sample_table', engine, index_col = 'Respondent')
+    
+    sql_df.head()
+    
+    sql_df = pd.read_sql_query('SELECT * FROM sample_table', engine, index_col = 'Respondent')
+    sql_df.head()
+    
