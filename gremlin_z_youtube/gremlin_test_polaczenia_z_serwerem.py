@@ -29,28 +29,22 @@ def create_vertex(g: GraphTraversalSource, logger: Logger, label: str, vertex_pr
     logger.info('Utworzono wierzchołek w grafie')
     return new_vertex.next()
 
-def create_edge(g: GraphTraversalSource, logger: Logger, v1: GraphTraversal, v2: GraphTraversal) -> GraphTraversal:
-    edge = g.V(v1).addE('knows').to(v2).property('weight', 0.75).iterate()
+def create_edge(g: GraphTraversalSource, logger: Logger, v1: GraphTraversal, v2: GraphTraversal, label: str, properties: dict) -> GraphTraversal:
+    new_edge = g.V(v1).addE(label).to(v2)
+    for key, value in properties.items():
+        new_edge = new_edge.property(key, value)
     logger.info('Utworzono gałąź w grafie')
-    return edge
+    return new_edge.iterate()
 
 def show_info_about_graph(g: GraphTraversalSource, logger: Logger):
     logger.info(f'Informacje na temat grafu (wierzchołki) :{g.V().toList()}')
     logger.info(f'Informacje na temat grafu (gałęzie) :{g.E().toList()}')
-
-    for vertex in g.V().toList():
-        print(f'vertex properties : {g.V(vertex).properties().toList()}')
     
     for vertex in g.V().toList():
-        print(f'vertex value map : {g.V(vertex).valueMap().next()}')
+        print(f'vertex ({vertex.id} - {vertex.label}), properties : {g.V(vertex).valueMap().next()}')
 
-    # marko = g.V().has('person','name','marko').next()
-    # logger.info(f'Pobrano węzęł : {marko["name"]}')
-    # print(marko)
-
-    # peopleMarkoKnows = g.V().has('person','name','marko').out('knows').toList()
-    # logger.info(f'Pobrano listę znajowmych węzła {marko["name"]} o długości {len(peopleMarkoKnows)}')
-    # print(peopleMarkoKnows)
+    for edge in g.E().toList():
+        print(f'edge ({edge.id} - {edge.label}), properties : {g.E(edge).valueMap().next()}')
 
 if __name__ == '__main__':
     logger = get_logger()
