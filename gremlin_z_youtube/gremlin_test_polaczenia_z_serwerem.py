@@ -14,7 +14,7 @@ def get_logger() -> Logger:
 def create_graph_server_connection() -> DriverRemoteConnection:
     return DriverRemoteConnection('ws://localhost:8182/gremlin','g')
 
-def create_graph_traversal(connection, logger: Logger) -> GraphTraversalSource:
+def create_graph_traversal(connection: DriverRemoteConnection, logger: Logger) -> GraphTraversalSource:
     graph_traversal = traversal().withRemote(connection)
     logger.info('Utworzono połączenie z serwerem Gremlina')
     return graph_traversal
