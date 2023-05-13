@@ -21,7 +21,14 @@ def create_graph_traversal(connection: DriverRemoteConnection, logger: Logger) -
     return graph_traversal
 
 def drop_all_vertices(g: GraphTraversalSource) -> None:
-    g.V().drop().iterate()
+    all_vertices: GraphTraversal = g.V().toSet()
+    all_edges: GraphTraversal = g.E().toSet()
+    
+    print(f'Wszystkie wierzchołki grafu : {all_vertices}')
+    print(f'Wszystkie gałęzie grafu : {all_edges}')
+    
+    g.V(all_vertices).drop().iterate()
+    g.E(all_edges).drop().iterate()
 
 def create_vertex(g: GraphTraversalSource, logger: Logger, label: str, vertex_properties: dict) -> GraphTraversal:
     new_vertex = g.addV(label)
