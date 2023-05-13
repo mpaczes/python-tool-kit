@@ -3,6 +3,7 @@ from gremlin_python.driver.driver_remote_connection import DriverRemoteConnectio
 from gremlin_python import statics
 from gremlin_python.structure.graph import Graph
 from gremlin_python.process.graph_traversal import GraphTraversal, GraphTraversalSource
+from gremlin_python.process.traversal import T
 
 import logging
 from logging import Logger

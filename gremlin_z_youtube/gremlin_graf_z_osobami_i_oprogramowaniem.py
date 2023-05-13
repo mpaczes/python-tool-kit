@@ -1,5 +1,13 @@
 from gremlin_test_polaczenia_z_serwerem import *
 
+from gremlin_python.process.anonymous_traversal import traversal
+from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
+from gremlin_python import statics
+from gremlin_python.structure.graph import Graph
+from gremlin_python.process.graph_traversal import GraphTraversal, GraphTraversalSource
+
+from gremlin_python.process.traversal import T
+
 def get_vertex_types(g: GraphTraversalSource) -> list:
     return g.V().label().groupCount().toList()
 
