@@ -111,6 +111,8 @@ if __name__ == '__main__':
 
     # show_info_about_graph(g, logger)
 
+    # drop_all_vertices(g)    # do usunięcia - tylko do testów
+
     graph_traversal: GraphTraversal = g.V().elementMap()
     graph_converter = GraphIntoDataFrame(graph_traversal)
 

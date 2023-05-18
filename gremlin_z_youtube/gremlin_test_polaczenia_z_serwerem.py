@@ -27,8 +27,12 @@ def drop_all_vertices(g: GraphTraversalSource) -> None:
     print(f'Wszystkie wierzchołki grafu : {all_vertices}')
     print(f'Wszystkie gałęzie grafu : {all_edges}')
     
+    print(f'Liczba wierzchołków grafu przed ich usunięciem : {g.V(all_vertices).count().next()}')
+
     g.V(all_vertices).drop().iterate()
     g.E(all_edges).drop().iterate()
+
+    print(f'Liczba wierzchołków grafu po ich usunięciu : {g.V(all_vertices).count().next()} - {g.V().count().next()}')
 
 def create_vertex(g: GraphTraversalSource, logger: Logger, label: str, vertex_properties: dict) -> GraphTraversal:
     new_vertex = g.addV(label)
@@ -63,6 +67,6 @@ if __name__ == '__main__':
     v1 = create_vertex(g, logger, 'person', v1_properties)
     v2_properties = {'id' : 2, 'label' : 'person', 'name' : 'stephen', 'age' : '25', 'languages' : ['.NET', 'C++']}
     v2 = create_vertex(g, logger, 'person', v2_properties)
-    edge = create_edge(g, logger, v1, v2)
+    edge = create_edge(g, logger, v1, v2, 'knows', dict())
     show_info_about_graph(g, logger)
     connection.close()
