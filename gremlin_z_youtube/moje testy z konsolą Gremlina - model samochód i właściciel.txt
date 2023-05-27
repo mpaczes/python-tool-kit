@@ -64,4 +64,30 @@ Strona z książką online o Gremlinie ('PRACTICAL GREMLIN: An Apache TinkerPop 
 	.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').addE('należy_do')\
 	.to('wierzhołek_właścicel')
 
-(5) ..
+(5) Informacje o utworzonym grafie :
+
+	g.V().hasLabel('samochód')
+	g.V().hasLabel('właścicel')
+	
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443')
+	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek'))
+
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').values() -> wartości właściwości wierzhołka (nie ma kluczy)
+	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).values()
+	
+	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).values().fold()	-> tworzy listę wartości
+
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').valueMap(true) -> A call to valueMap will return all of the properties of a vertex or edge as an array of key:value pairs. Basically what in Java terms is called a HashMap. 
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').valueMap(true).unfold() -> The unfold step at the end of the query is used to make the results easier to read.
+	
+	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).valueMap().select('imię', 'nazwisko')	-> nie ma id i label
+	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).valueMap(true, 'imię', 'nazwisko').unfold() -> jest label i id
+	
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').id() -> What is the ID of the vertex?
+	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').label() -> What label does the vertex have?
+	
+	g.E().or(hasLabel('posiada'), hasLabel('należy_do')) -> operator or
+	g.V().or(hasLabel('właścicel'), hasLabel('samochód')) -> operator or
+	g.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')) -> operator and
+	
+	
