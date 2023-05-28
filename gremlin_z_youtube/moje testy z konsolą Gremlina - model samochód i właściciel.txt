@@ -11,9 +11,9 @@ Strona z książką online o Gremlinie ('PRACTICAL GREMLIN: An Apache TinkerPop 
 
 (0) ładowanie początkowego grafu :
 
-	Serwer Gremlina na localhost nie utrwala stanu grafu, czyli po zamknięciu serwera i ponownym otwraciu mamy pusty graf.
+	Serwer Gremlina na localhost nie utrwala stanu grafu, czyli po zamknięciu serwera i ponownym otwarciu mamy pusty graf.
 
-	Dlatego po każdym otwarciu serwera Gremlina i konsoli Gremlina możnazałądować początkowy graf tak :
+	Dlatego po każdym otwarciu serwera Gremlina i konsoli Gremlina można załadować początkowy graf tak :
 	
 		:l C:\devel_python\gremlin_z_youtube\graf_dla_modelu_samochod_i_wlascicel.txt
 		
