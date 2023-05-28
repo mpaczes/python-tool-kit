@@ -1,5 +1,5 @@
 
-Moje testy z konsolą Gremlina - model 'Samochód - właścicel'.
+Moje testy z konsolą Gremlina - model 'samochod - wlasciciel'.
 
 Do działania potrzebny jest lokalny serwer Gremlina na porcie 8182 i konsola Gremlina.
 
@@ -8,6 +8,16 @@ Wszystkie przykłady zostały uruchomione w konsoli Gremlina.
 Strona z książką online o Gremlinie ('PRACTICAL GREMLIN: An Apache TinkerPop Tutorial') :
 
 	https://www.kelvinlawrence.net/book/PracticalGremlin.html
+
+(0) ładowanie początkowego grafu :
+
+	Serwer Gremlina na localhost nie utrwala stanu grafu, czyli po zamknięciu serwera i ponownym otwraciu mamy pusty graf.
+
+	Dlatego po każdym otwarciu serwera Gremlina i konsoli Gremlina możnazałądować początkowy graf tak :
+	
+		:l C:\devel_python\gremlin_z_youtube\graf_dla_modelu_samochod_i_wlascicel.txt
+		
+	gdzie plik 'graf_dla_modelu_samochod_i_wlascicel.txt' zawiera kroki (2), (3) i (4).
 
 (1) początkowa konfiguracja :
 
@@ -24,70 +34,92 @@ Strona z książką online o Gremlinie ('PRACTICAL GREMLIN: An Apache TinkerPop 
 
 (2) utworzenie wierzchołków grafu - samochody :
 
-	g.addV('samochód').property('numer_rejestracyjny', 'EKU 3443').property('marka', 'Skoda').property('model', 'Octavia II').property('kolor_nadwozia', 'zielony').property('skrzynia_biegów', 'manualna-5').next()
-	g.addV('samochód').property('numer_rejestracyjny', 'PO 2211').property('marka', 'Fiat').property('model', '125 P').property('kolor_nadwozia', 'czwerwony').property('skrzynia_biegów', 'manualna-4').next()
-	g.addV('samochód').property('numer_rejestracyjny', 'DW 9900').property('marka', 'Renault').property('model', 'Laguna').property('kolor_nadwozia', 'biały').property('skrzynia_biegów', 'manualna-5').next()
-	g.addV('samochód').property('numer_rejestracyjny', 'CSK 4455').property('marka', 'Porsche').property('model', 'Carrera').property('kolor_nadwozia', 'niebieski').property('skrzynia_biegów', 'automatyczna-6').next()
-	g.addV('samochód').property('numer_rejestracyjny', 'ZSL 8877').property('marka', 'Syrena').property('model', '100').property('kolor_nadwozia', 'biały').property('skrzynia_biegów', 'manualna-3').next()
+	g.addV('samochod').property('numer_rejestracyjny', 'EKU 3443').property('marka', 'Skoda').property('model', 'Octavia II').property('kolor_nadwozia', 'zielony').property('skrzynia_biegow', 'manualna-5').next()
+	g.addV('samochod').property('numer_rejestracyjny', 'PO 2211').property('marka', 'Fiat').property('model', '125 P').property('kolor_nadwozia', 'czwerwony').property('skrzynia_biegow', 'manualna-4').next()
+	g.addV('samochod').property('numer_rejestracyjny', 'DW 9900').property('marka', 'Renault').property('model', 'Laguna').property('kolor_nadwozia', 'bialy').property('skrzynia_biegow', 'manualna-5').next()
+	g.addV('samochod').property('numer_rejestracyjny', 'CSK 4455').property('marka', 'Porsche').property('model', 'Carrera').property('kolor_nadwozia', 'niebieski').property('skrzynia_biegow', 'automatyczna-6').next()
+	g.addV('samochod').property('numer_rejestracyjny', 'ZSL 8877').property('marka', 'Syrena').property('model', '100').property('kolor_nadwozia', 'bialy').property('skrzynia_biegow', 'manualna-3').next()
 
-(3) utworzenie wierzchołków grafu - właścicele :
+(3) utworzenie wierzchołków grafu - właściciele :
 
-	g.addV('właścicel').property('imię', 'Janina').property('nazwisko', 'Szewska').property('data_urodzenie', '1980-09-14').property('kategorie_prawa_jazdy', 'ABT').next()
-	g.addV('właścicel').property('imię', 'Stefan').property('nazwisko', 'Jarząbek').property('data_urodzenie', '1992-11-25').property('kategorie_prawa_jazdy', 'CDE').next()
-	g.addV('właścicel').property('imię', 'Zdzisław').property('nazwisko', 'Dziąsło').property('data_urodzenie', '2003-04-30').property('kategorie_prawa_jazdy', 'ABCDET').next()
+	g.addV('wlasciciel').property('imie', 'Janina').property('nazwisko', 'Szewska').property('data_urodzenie', '1980-09-14').property('kategorie_prawa_jazdy', 'ABT').next()
+	g.addV('wlasciciel').property('imie', 'Stefan').property('nazwisko', 'Jarzabek').property('data_urodzenie', '1992-11-25').property('kategorie_prawa_jazdy', 'CDE').next()
+	g.addV('wlasciciel').property('imie', 'Zdzislaw').property('nazwisko', 'Dziaslo').property('data_urodzenie', '2003-04-30').property('kategorie_prawa_jazdy', 'ABCDET').next()
 
-(4) utworzenie gałęzi grafu - relacje typu 'posiada' i 'należy_do' :
+(4) utworzenie gałęzi grafu - relacje typu 'posiada' i 'nalezy_do' :
 
 	# relacje typu 'posiada' :
-	g.V().has('samochód', 'numer_rejestracyjny', 'CSK 4455').as('wierzhołek_samochód')\
-	.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')).addE('posiada')\
-	.to('wierzhołek_samochód')
+	g.V().has('samochod', 'numer_rejestracyjny', 'CSK 4455').as('wierzholek_samochod')\
+	.V().and(has('wlasciciel', 'imie','Zdzislaw'), has('wlasciciel', 'nazwisko','Dziaslo')).addE('posiada')\
+	.to('wierzholek_samochod')
 	
-	g.V().has('samochód', 'numer_rejestracyjny', 'ZSL 8877').as('wierzhołek_samochód')\
-	.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')).addE('posiada')\
-	.to('wierzhołek_samochód')
+	g.V().has('samochod', 'numer_rejestracyjny', 'ZSL 8877').as('wierzholek_samochod')\
+	.V().and(has('wlasciciel', 'imie','Zdzislaw'), has('wlasciciel', 'nazwisko','Dziaslo')).addE('posiada')\
+	.to('wierzholek_samochod')
 	
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').as('wierzhołek_samochód')\
-	.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).addE('posiada')\
-	.to('wierzhołek_samochód')
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').as('wierzholek_samochod')\
+	.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).addE('posiada')\
+	.to('wierzholek_samochod')
 	
-	# relacje typu 'należy_do' :
-	g.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')).as('wierzhołek_właścicel')\
-	.V().has('samochód', 'numer_rejestracyjny', 'CSK 4455').addE('należy_do')\
-	.to('wierzhołek_właścicel')
+	# relacje typu 'nalezy_do' :
+	g.V().and(has('wlasciciel', 'imie','Zdzislaw'), has('wlasciciel', 'nazwisko','Dziaslo')).as('wierzholek_wlasciciel')\
+	.V().has('samochod', 'numer_rejestracyjny', 'CSK 4455').addE('nalezy_do')\
+	.to('wierzholek_wlasciciel')
 	
-	g.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')).as('wierzhołek_właścicel')\
-	.V().has('samochód', 'numer_rejestracyjny', 'ZSL 8877').addE('należy_do')\
-	.to('wierzhołek_właścicel')
+	g.V().and(has('wlasciciel', 'imie','Zdzislaw'), has('wlasciciel', 'nazwisko','Dziaslo')).as('wierzholek_wlasciciel')\
+	.V().has('samochod', 'numer_rejestracyjny', 'ZSL 8877').addE('nalezy_do')\
+	.to('wierzholek_wlasciciel')
 
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).as('wierzhołek_właścicel')\
-	.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').addE('należy_do')\
-	.to('wierzhołek_właścicel')
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).as('wierzholek_wlasciciel')\
+	.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').addE('nalezy_do')\
+	.to('wierzholek_wlasciciel')
 
-(5) Informacje o utworzonym grafie :
+(5) Jak wybrać ogólne informacje o konkretnym wierzchołku grafu :
 
-	g.V().hasLabel('samochód')
-	g.V().hasLabel('właścicel')
+	g.V().hasLabel('samochod')
+	g.V().hasLabel('wlasciciel')
 	
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443')
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek'))
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443')
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek'))
 
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').values() -> wartości właściwości wierzhołka (nie ma kluczy)
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).values()
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').values() -> wartości właściwości wierzhołka (nie ma kluczy)
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).values()
 	
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).values().fold()	-> tworzy listę wartości
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).values().fold()	-> tworzy listę wartości
 
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').valueMap(true) -> A call to valueMap will return all of the properties of a vertex or edge as an array of key:value pairs. Basically what in Java terms is called a HashMap. 
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').valueMap(true).unfold() -> The unfold step at the end of the query is used to make the results easier to read.
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').valueMap(true) -> A call to valueMap will return all of the properties of a vertex or edge as an array of key:value pairs. Basically what in Java terms is called a HashMap. 
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').valueMap(true).unfold() -> The unfold step at the end of the query is used to make the results easier to read.
 	
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).valueMap().select('imię', 'nazwisko')	-> nie ma id i label
-	g.V().and(has('właścicel', 'imię','Stefan'), has('właścicel', 'nazwisko','Jarząbek')).valueMap(true, 'imię', 'nazwisko').unfold() -> jest label i id
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).valueMap().select('imie', 'nazwisko')	-> nie ma id i label
+	g.V().and(has('wlasciciel', 'imie','Stefan'), has('wlasciciel', 'nazwisko','Jarzabek')).valueMap(true, 'imie', 'nazwisko').unfold() -> jest label i id
 	
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').id() -> What is the ID of the vertex?
-	g.V().has('samochód', 'numer_rejestracyjny', 'EKU 3443').label() -> What label does the vertex have?
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').id() -> What is the ID of the vertex?
+	g.V().has('samochod', 'numer_rejestracyjny', 'EKU 3443').label() -> What label does the vertex have?
 	
-	g.E().or(hasLabel('posiada'), hasLabel('należy_do')) -> operator or
-	g.V().or(hasLabel('właścicel'), hasLabel('samochód')) -> operator or
-	g.V().and(has('właścicel', 'imię','Zdzisław'), has('właścicel', 'nazwisko','Dziąsło')) -> operator and
+	g.E().or(hasLabel('posiada'), hasLabel('nalezy_do')) -> operator or
+	g.V().or(hasLabel('wlasciciel'), hasLabel('samochod')) -> operator or
+	g.V().and(has('wlasciciel', 'imie','Zdzislaw'), has('wlasciciel', 'nazwisko','Dziaslo')) -> operator and
 	
+(6) Szczegółowe informacje o wierzchołku grafu :
+
+	g.V().group().by(label).unfold()
+		==>samochod=[v[0], v[18], v[6], v[24], v[12]]
+		==>wlasciciel=[v[35], v[40], v[30]]
+		
+	g.V().groupCount().by(label)
+		==>[samochod:5,wlasciciel:3]
+		
+	g.V().hasLabel('wlasciciel').elementMap()
+		==>[id:35,label:wlasciciel,imie:Stefan,data_urodzenie:1992-11-25,nazwisko:Jarzabek,kategorie_prawa_jazdy:CDE]
+		==>[id:40,label:wlasciciel,imie:Zdzislaw,data_urodzenie:2003-04-30,nazwisko:Dziaslo,kategorie_prawa_jazdy:ABCDET]
+		==>[id:30,label:wlasciciel,imie:Janina,data_urodzenie:1980-09-14,nazwisko:Szewska,kategorie_prawa_jazdy:ABT]
+
+	g.E().group().by(label).unfold()
+		==>posiada=[e[45][40-posiada->18], e[46][40-posiada->24], e[47][35-posiada->0]]
+		==>nalezy_do=[e[48][18-nalezy_do->40], e[49][24-nalezy_do->40], e[50][0-nalezy_do->35]]
+
+	g.E().hasLabel('posiada').elementMap()
+		==>[id:45,label:posiada,IN:[id:18,label:samochod],OUT:[id:40,label:wlasciciel]]
+		==>[id:46,label:posiada,IN:[id:24,label:samochod],OUT:[id:40,label:wlasciciel]]
+		==>[id:47,label:posiada,IN:[id:0,label:samochod],OUT:[id:35,label:wlasciciel]]
 	
