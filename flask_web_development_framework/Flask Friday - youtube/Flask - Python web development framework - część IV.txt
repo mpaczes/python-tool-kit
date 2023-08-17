@@ -1,0 +1,42 @@
+
+Flask - Python web development framework.
+
+Część IV :
+
+    Create One To Many Database Relationship
+
+(1) class Posts(db.Model):       # strona 'wiele' relacji
+        id = db.Column(db.Integer, primary_key=True)
+        title = db.Column(db.String(255))
+        content = db.Column(db.Text)
+        date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+        slug = db.Column(db.String(255))
+        # foreign key to link users (refer to primary key of the user)
+        poster_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+(2) class Users(db.Model):          # strona 'jeden' relacji
+        id = db.Column(db.Integer, primary_key=True)
+        username = db.Column(db.String(20), nullable=False)
+        name = db.Column(db.String(200), nullable=False)
+        email = db.Column(db.String(120), nullable=False)
+        favorite_color = db.Column(db.String(120))
+        date_added = db.Column(db.DateTime, default=datetime.utcnow)
+        password_hash = db.Column(db.String(128))
+        # user can have many posts
+        posts = db.relationship('Posts', backref='poster')  # 'poster' to jest fake kolumna; później tej zmiennej można użyć tak : poster.name albo poster.email
+
+(3) flask db migrate -m 'added foreign key'
+
+    flask db upgrade
+
+(4) poster = current_user.id
+
+    post = Posts(title=, content=, .., poster_id=poster, slug=)
+
+(5) {% for post in posts %}         # Users model
+
+        {{ post.poster.name }}
+
+        {{ post.poster.email }}
+       
+    {% endfor %}
