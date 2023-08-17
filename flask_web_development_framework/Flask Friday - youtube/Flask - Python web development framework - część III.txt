@@ -1,0 +1,133 @@
+
+Flask - Python web development framework.
+
+Część III :
+
+    autentykacja i autoryzacja
+	
+(1) pip install flask_login
+
+    flask run
+    
+    'Flask-Login' :
+    
+        store the active user's ID in the session and let you log them in and out easily
+
+        let you restrict views to logged in users
+        
+    potrzebny jest model do rejestracji użytkownika
+
+(2) from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+    from werkzeug.security import generate_password_hash, check_password_hash
+
+(3) model w bazie danych :
+
+    class Users(db.Model, UserMixin):
+        id = db.Column(db.Integer, primary_key=True)
+        username = db.Column(db.String, nullable=False, unique=True)
+        name = db.Column(db.String(200), nullable=False)
+        email = db.Column(db.String(120), nullable=False)
+        favorite_color = db.Column(db.String(120))
+        date_added = db.Column(db.DateTime, default=datetime.utcnow)
+        password_hash = db.Column(db.String(128))
+        
+        @property 
+        def password(self):
+            raise AttributeError('password is not a readable attribute')
+            
+        @password.setter
+        def password(self, password):
+            self.password_hash = generate_password_hash(password, 'sha256')
+
+(4) flask db migrate -m 'added username'
+    flask db upgrade
+    flask run
+
+(5) class UserForm(FlaskForm):
+        name = StringField('Name', validators=[DataRequired()])
+        username = StringField('Username', validators=[DataRequired()])
+        email = StringField('Email', validators=[DataRequired()])
+        favorite_color = StringField('Favorite Color')
+        password_hash = PasswordField('Password', validators=[DataRequired()])
+        password_hash2 = PasswordField('Confirm Password', validators=[DataRequired()])
+        submit = SubmitField('Submit')
+
+(6) @app.route('/user/add', methods=['GET', 'POST'])
+    def add_user():
+        name = None
+        form = UserForm()
+        if form.validate_on_submit():
+            user = Users.query.filter_by(email=form.email.data).first()
+            if user is None:
+                hashed_pw = generate_password_hash(form.password_hash.data, 'sha256')
+                user = Users(username=form.username.data, name=form.name.data, email=form.email.data, favorite_color=form.favorite_color.data, password_hash=hashed_pw)
+                db.session.add(user)
+                db.session.commit()
+            name = form.name.data
+            form.name.data = ''
+            form.username.data = ''
+            form.email.data = ''
+            form.favorite_color.data = ''
+            form.pasword_hash.data = ''
+            
+            flash('User added successfully')
+        our_users = Users.query.order_by(Users.date_added)
+        return render_template('add_user.html', form=form, name=name, our_users=our_users)
+
+(7) login page i dashboard :
+
+    login.html
+    dashboard.html
+    
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'login'
+    
+    @login_manager.user_loader # load our user when we log in
+    def load_user(user_id):
+        return Users.query.get(int(user_id))
+    
+    class LoginForm(FlaskForm):
+        username = StringField('Username', validators=[DataRequired()])
+        password = PasswordField('Password', validators=[DataRequired()])
+        submit = SubmitField('Submit')
+    
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        form = LoginForm()
+        if form.validate_on_submit():
+            user = Users.query.filter_by(username=form.username.data).first()
+            if user:
+                # check the hash
+                if check_password_hash(user.password_hash, form.password.data):
+                    login_user(user)
+                    flash('Login successfull')
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash('Wrong password - try again')
+            else:
+                flash('That user does not exist - try again')
+                
+        return render_template('login.html', form=form)
+        
+    @app.route('/logout', methods=['GET', 'POST'])
+    @login_required
+    def logout():
+        logout_user()
+        flash('You have been logged out')
+        return redirect(url_for('login'))
+        
+    @app.route('/dashboard', methods=['GET', 'POST'])
+    @login_required
+    def dashboard():
+        return render_template('dashboard.html')
+
+(8) Create A User Dashboard :
+
+    {% if current_user.is_authenticated %}
+        # użytkownik jest zalogowany
+    {% else %}
+        # użytkownik nie jest zalogowany
+    {% endif %}
+
+(9)

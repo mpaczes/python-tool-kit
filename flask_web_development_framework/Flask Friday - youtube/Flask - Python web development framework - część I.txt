@@ -1,0 +1,186 @@
+
+Flask - Python web development framework.
+
+Część I :
+
+    instalacja Flask
+    środowisko wirtualne Python
+    uruchamianie Flask
+    ruting
+    obsługa błędów
+    szablony Jinja
+    formatki HTML
+    pliki CSS, JS i obrazki
+
+(1) Narzędzia :
+
+	konsola Git Bash
+
+(2) Środowisko wirtualne Pythona :
+
+        python -m venv <NAZWA_ŚRODOWISKA_WIRTUALNEGO>
+        
+        source <NAZWA_ŚRODOWISKA_WIRTUALNEGO>/Scripts/activate
+    
+(3) Instalacja Flask :
+
+    używamy konsoli Git Bash (patrz punkt 1)
+
+    wirutlane środowisko Pythona musi być aktywowane (patrz punkt (2))
+
+    pip freeze
+    
+    pip install flask
+
+(4) Przydatne importy w skrypcie Pythona :
+
+    from flask import Flask, render_template, redirect, request, flash
+    
+    app = Flask(__name__)
+    
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+    
+    @app.route('/user/<name>')
+    def user(name):
+        return render_template('user.html', user_name=name)
+
+(5) Uruchamianie skryptu z Flask :
+
+    konsola Git Bash
+    
+    export FLASK_ENV=development
+    export FLASK_APP=<NAZWA_SKRYPTU_PYTHONA_Z_FLASK>
+    
+    flask run       -- uruchamia web serwer pod adresem : http://127.0.0.1:5000
+    
+    dzięki temu każde zapisanie zmian w skrypcie Python albo szablonie Jinja powoduje automatyczne przeładowanie web serwera
+
+(6) Jinja2 - template engine for Flask :
+
+    user.html - nazwa pliku HTML
+    
+    <h1>Hello {{ user_name }}</h1>
+    
+    {% for topping in favorite_pizza %}
+        {% if topping == 41 %}
+            {{ topping + 100 }}<br/>
+        {% else %}
+            {{ topping }}<br/>
+        {% endif %}
+    {% endfor %}
+
+(7) Obsługa błędów z Flask :
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template('404.html'), 404
+        
+(8) Dziedziczenie szablonów Jinja :
+
+    (8.1) base.html :
+    
+        ABOVE <br/><br/>
+    
+        {% block content %}
+        {% endblock %}
+        
+        BELOW <br/><br/>
+        
+    (8.2) index.html :
+    
+        {% extends 'base.html' %}
+        
+        {% include 'navbar.html' %}
+        <br/>
+        <div class='container'>
+            {% block content %}
+                <h1>Hello World</h1>
+            {% endblock %}
+        </div>
+
+(9) Obsługa linków w szablonach Ninja :
+
+    <a href="{{ url_for('index') }}">Flasker</a>
+    
+    'index' - odwołuje się do funkcji o nazwie 'index', która jest zdefiniowana w skrypcie Python jako ruting
+    
+    <a href="{{ url_for('user', name='John') }}">Flasker</a>
+    
+(10) Web Forms With WTF :
+
+    pip install flask-wtf
+    
+    (10.1) Skrypt Python :
+    
+        from flask_wtf import FlaskForm
+        from wtforms import StringField, SubmitField
+        from wtforms.validators import DataRequired
+
+        CRSF token - jest używany w formsach i dlatego trzeba skonfigurować to :
+        
+            app.config['SECRET_KEY'] = 'my super secret key'
+            
+        class NamerForm(FlaskForm):
+            name = StringField('What's your name', validators=[DataRequired()])
+            submit = SubmitField('Submit')
+            
+        @app.route('/name', methods=['GET', 'POST'])
+        def name():
+            name = None
+            form = NamerForm()
+            # validate form
+            if form.validate_on_submit:
+                name = form.name.data
+                form.name.data = ''
+            return render_template('name.html', name=name, form=form)
+
+    (10.2) Szablon HTML 'name.html' :
+    
+        {% extends 'base.html' %}
+        
+        {% block content %}
+            {% if name %}
+                <h1>Hello {{ name }}</h1>
+            {% else %}
+                <h1>What's your name</h1>
+                <br/>
+                <form method='POST'>
+                    {{ form.hidden_tag() }}
+                    
+                    {{ form.name.label(class='form-label') }}
+                    {{ form.name() }}
+                    <br/>
+                    {{ form.submit(class='btn btn-primary') }}
+                </form>
+            {% endif %}
+        {% endblock %}
+        
+(11) How To Use Messages With Flask :
+
+    wiadomość zostanie przesłana do strony która się załaduje
+
+    (11.1) Skrypt Python :
+    
+        flash('Form submitted successfully')
+        
+    (11.2) Szablon HTML :
+    
+        {% for message in get_flashed_messages() %}
+            {{ message }}
+        {% endfor %}
+
+(12) How to Use CSS Javascript and Images With Flask Static Files :
+
+    dla CSS, JS i obrazków musimy utworzyć katalog o nazwie 'static', a w nim katalogi :
+    
+        images
+        css
+        js
+        
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <img src="{{ url_for('static', filename='images/NortPeak.png') }}">
+
+    <script src="{{ url_for('static', filename='js/myfile.js') }}"></script>
