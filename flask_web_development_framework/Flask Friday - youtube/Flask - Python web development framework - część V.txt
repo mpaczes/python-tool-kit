@@ -1,0 +1,67 @@
+﻿
+Flask - Python web development framework.
+
+Część V :
+
+
+	How To Add A Rich Text Editor
+	Upload Profile Picture
+
+(1) pip install flask-ckeditor
+
+	flask run
+
+(2) from flask_ckeditor import CKEditor, CKEditorField
+
+    app = Flask(__name__)
+    ckeditor = CKEditor(app)
+
+(3) strona HTML z formatką :
+
+    <form>
+        {{ form.content.label(class="form-label") }}
+        {{ form.content(class="form-control", rows="10") }}
+        {{ form.submit(class="btn btn-secondary") }}
+    </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='content') }}
+
+(4) class PostForm(FlaskForm):
+        title = StringField()
+        ..
+        content = CKEditorField('Content', validators=[DataRequired()])
+        ..
+
+(5) from flask_wtf.file import FileField
+    from werkzeug.utils import secure_filename
+    import uuid as uuid
+    import os
+
+    class UserForm(FlaskForm):
+        ..
+        profile_pic = FileField('Profile pic')
+        ..
+
+(6)     {{ form.profile_pic.label(class="form-label") }}
+        {{ form.profile_pic(class="form-control", value=name_to_update.profile_pic) }}
+
+(7) class Users(db.Model, UserMixin):
+        ..
+        profile_pic = db.Column(db.String(), nullable=True)
+        ..
+        
+    flask db migrate -m 'added profile pic'
+    flask db upgrade
+    flask run
+        
+(8) name_to_update.profile_pic = request.files['profile_pic']
+    pic_filename = secure_filename(name_to_update.profile_pic.filename)
+    pic_name = str(uuid.uuid1()) + '_' + pic_filename # więcej niż jeden użytkownik może tą samą nazwę pliku np. 'moj_profil.png'
+    name_to_update.profile_pic = pic_name
+
+(9) <form action='/dashboard' method='POST' enctype='multipart/form-data'>
+
+(10) UPLOAD_FOLDER = 'static/images'
+     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+     
+(11) name_to_update.profile_pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_name))
