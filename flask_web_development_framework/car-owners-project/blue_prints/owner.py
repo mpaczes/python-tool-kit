@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response, jsonify, json
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from datetime import date
+from datetime import datetime
 
 from car_owners import db
 from models.owner import Owner
@@ -13,7 +13,7 @@ URL'e do testowania API :
     
     curl -X GET http://localhost:5000/bp_owner_api/owners/3
 
-    curl -X POST http://localhost:5000/bp_owner_api/owners -H "Content-type: application/json" -d "{\"first_name\":\"marcelina\",\"last_name\":\"zawadzka\",\"email\":\"marcelin.zawadzka@tlen.cz\"}"
+    curl -X POST http://localhost:5000/bp_owner_api/owners -H "Content-type: application/json" -d "{\"first_name\":\"natalia\",\"last_name\":\"nykiel\",\"email\":\"natalia.nykiel@tlen.cz\", \"date_of_birth\":\"1994-04-19\"}"
 
     curl -X DELETE http://localhost:5000/bp_owner_api/owners/3
 
@@ -68,8 +68,12 @@ def user_create():
     first_name = data.get('first_name', None)
     last_name = data.get('last_name', None)
     email = data.get('email', None)
+    date_of_birth = data.get('date_of_birth', None)     # '1990-02-19'
+    formatted_date_of_build = None
+    if date_of_birth:
+        formatted_date_of_build = datetime.strptime(date_of_birth, '%Y-%m-%d')
 
-    owner = Owner(first_name=first_name, last_name=last_name, email=email)
+    owner = Owner(first_name=first_name, last_name=last_name, email=email, date_of_birth=formatted_date_of_build)
     db.session.add(owner)
     db.session.commit()
 
@@ -100,6 +104,10 @@ def user_update(owner_id):
     first_name = data.get('first_name', None)
     last_name = data.get('last_name', None)
     email = data.get('email', None)
+    date_of_birth = data.get('date_of_birth', None)     # '1990-02-19'
+    formatted_date_of_build = None
+    if date_of_birth:
+        formatted_date_of_build = datetime.strptime(date_of_birth, '%Y-%m-%d')
 
     if first_name:
         owner.first_name = first_name
@@ -107,6 +115,8 @@ def user_update(owner_id):
         owner.last_name = last_name
     if email:
         owner.email = email
+    if formatted_date_of_build:
+        owner.date_of_birth = formatted_date_of_build
 
     db.session.commit()
 

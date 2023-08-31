@@ -2,7 +2,7 @@ from flask import Blueprint, flash, g, redirect, render_template, request, sessi
 from sqlalchemy.exc import NoResultFound
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from datetime import date
+from datetime import datetime
 
 from car_owners import db
 from models.owner import Vehicle
@@ -78,10 +78,13 @@ def vehicle_create(owner_id):
     brand = data.get('brand', None)
     model = data.get('model', None)
     color = data.get('color', None)
-    date_of_build = data.get('date_of_build', None)
+    date_of_build = data.get('date_of_build', None)     # '1990-01-17'
+    formatted_date_of_build = None
+    if date_of_build:
+        formatted_date_of_build = datetime.strptime(date_of_build, '%Y-%m-%d')
 
     vehicle = Vehicle(owner_id=owner_id, vin_number=vin_number, brand=brand, model= model, color=color,
-                      date_of_build=date_of_build)
+                      date_of_build=formatted_date_of_build)
 
     db.session.add(vehicle)
     db.session.commit()
