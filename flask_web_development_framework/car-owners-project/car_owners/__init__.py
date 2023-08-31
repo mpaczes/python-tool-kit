@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 '''
 Jak uruchmiać aplikację :
     
-    (venv_car_owners_python_3_11) c:\devel_python\flask_web_development_framework\car-owners-project>flask --app car_owners run --debug
+    (venv_car_owners_python_3_11) car-owners-project>flask --app car_owners run --debug
 
 Jak uruchamiać migrację :
 
