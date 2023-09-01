@@ -6,7 +6,10 @@
 
 {% block content %}
     {% for owner in owners %}
-        {{ owner.owner_id }} | {{ owner.first_name }} | {{ owner.last_name }} | {{ owner.date_of_birth }} | {{ owner.email }}
+        {{ owner.owner_id }} | {{ owner.first_name }} | {{ owner.last_name }} |
+        {{ owner.date_of_birth }} | {{ owner.email }} |
+        <a href="{{ url_for('bp_owner.edit_user', owner_id=owner.owner_id) }}">edit</a> |
+        <a href="{{ url_for('bp_owner.delete_user', owner_id=owner.owner_id) }}">delete</a>
         <br>
     {% endfor %}
 {% endblock %}
