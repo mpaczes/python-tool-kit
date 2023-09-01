@@ -50,8 +50,8 @@ def create_app(test_config=None):
     migrate.init_app(app, db)
 
     # blue prints registration
-    from blue_prints.owner import bp_owner_api
-    from blue_prints.vehicle import bp_vehicle_api
+    from blue_prints.bp_owner_api import bp_owner_api
+    from blue_prints.bp_vehicle_api import bp_vehicle_api
     app.register_blueprint(bp_owner_api)
     app.register_blueprint(bp_vehicle_api)
 
