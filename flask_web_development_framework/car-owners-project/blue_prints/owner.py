@@ -1,5 +1,6 @@
-from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response, jsonify, json
+from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response, jsonify, json, abort
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy.exc import NoResultFound
 
 from datetime import datetime
 
@@ -43,16 +44,19 @@ def user_list():
 
 @bp_owner_api.route('/owners/<int:owner_id>', methods=['GET'])
 def user_single(owner_id):
-    owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
+    try:
+        owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
 
-    owner_as_dict = dict()
-    owner_as_dict['owner_id'] = owner.owner_id
-    owner_as_dict['first_name'] = owner.first_name
-    owner_as_dict['last_name'] = owner.last_name
-    owner_as_dict['date_of_birth'] = owner.date_of_birth
-    owner_as_dict['email'] = owner.email
+        owner_as_dict = dict()
+        owner_as_dict['owner_id'] = owner.owner_id
+        owner_as_dict['first_name'] = owner.first_name
+        owner_as_dict['last_name'] = owner.last_name
+        owner_as_dict['date_of_birth'] = owner.date_of_birth
+        owner_as_dict['email'] = owner.email
 
-    return make_response(owner_as_dict, 200)
+        return make_response(owner_as_dict, 200)
+    except NoResultFound:
+        abort(404, 'A database result was required but none owner was found.')
 
 
 @bp_owner_api.route("/owners", methods=['POST'])
@@ -82,42 +86,49 @@ def user_create():
 
 @bp_owner_api.route("/owners/<int:owner_id>", methods=['DELETE'])
 def user_delete(owner_id):
-    owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
+    try:
+        owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
 
-    db.session.delete(owner)
-    db.session.commit()
+        db.session.delete(owner)
+        db.session.commit()
 
-    return make_response('Owner has been deleted', 200)
+        return make_response('Owner has been deleted', 200)
+    except NoResultFound:
+        abort(404, 'A database result was required but none owner was found.')
 
 
 @bp_owner_api.route("/owners/<int:owner_id>", methods=['PUT'])
 def user_update(owner_id):
-    owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
+    try:
+        owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
 
-    if request.is_json:
-        data = request.json
-        print('Request is json')
-    else:
-        data = json.loads(request.data)
-        print('Request is not json')
+        if request.is_json:
+            data = request.json
+            print('Request is json')
+        else:
+            data = json.loads(request.data)
+            print('Request is not json')
 
-    first_name = data.get('first_name', None)
-    last_name = data.get('last_name', None)
-    email = data.get('email', None)
-    date_of_birth = data.get('date_of_birth', None)     # '1990-02-19'
-    formatted_date_of_build = None
-    if date_of_birth:
-        formatted_date_of_build = datetime.strptime(date_of_birth, '%Y-%m-%d')
+        first_name = data.get('first_name', None)
+        last_name = data.get('last_name', None)
+        email = data.get('email', None)
+        date_of_birth = data.get('date_of_birth', None)     # '1990-02-19'
+        formatted_date_of_build = None
+        if date_of_birth:
+            formatted_date_of_build = datetime.strptime(date_of_birth, '%Y-%m-%d')
 
-    if first_name:
-        owner.first_name = first_name
-    if last_name:
-        owner.last_name = last_name
-    if email:
-        owner.email = email
-    if formatted_date_of_build:
-        owner.date_of_birth = formatted_date_of_build
+        if first_name:
+            owner.first_name = first_name
+        if last_name:
+            owner.last_name = last_name
+        if email:
+            owner.email = email
+        if formatted_date_of_build:
+            owner.date_of_birth = formatted_date_of_build
 
-    db.session.commit()
+        db.session.commit()
 
-    return make_response('Owner has been updated', 200)
+        return make_response('Owner has been updated', 200)
+
+    except NoResultFound:
+        abort(404, 'A database result was required but none owner was found.')
