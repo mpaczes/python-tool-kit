@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Show all users{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    {% for owner in owners %}
+        {{ owner.owner_id }} | {{ owner.first_name }} | {{ owner.last_name }} | {{ owner.date_of_birth }} | {{ owner.email }}
+        <br>
+    {% endfor %}
+{% endblock %}

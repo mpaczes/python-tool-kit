@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 from car_owners import db
-from models.owner import Vehicle
+from models.vehicle import Vehicle
 
 '''
 URL'e do testowania API :
