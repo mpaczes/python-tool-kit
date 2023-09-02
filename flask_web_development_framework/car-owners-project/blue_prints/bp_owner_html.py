@@ -24,7 +24,7 @@ bp_owner_html = Blueprint('bp_owner', __name__, url_prefix='/bp_owner_html', tem
 class OwnerForm(FlaskForm):
     first_name = StringField('First name', validators=[DataRequired()])
     last_name = StringField('Last name', validators=[DataRequired()])
-    email = StringField('Email', validators=[Email()])
+    email = StringField('Email', validators=[Email(), Optional()])
     date_of_birth = DateTimeField('Date of birth', validators=[Optional()])
     submit = SubmitField('Save owner')
 
@@ -97,5 +97,15 @@ def delete_user():
         db.session.commit()
         flash('Owner has been deleted')
         return redirect(url_for('bp_owner.user_list'))
+    except NoResultFound:
+        abort(404, 'A database result was required but none owner was found.')
+
+
+@bp_owner_html.route('/owners/owner_details/<int:owner_id>', methods=['GET'])
+def owner_details_with_vehicles(owner_id):
+    try:
+        owner = db.session.execute(db.select(Owner).where(Owner.owner_id == owner_id)).scalars().one()
+        return render_template('bp_owner_template/owner_details_with_vehicles.html', owner=owner,
+                               owner_vehicles=owner.vehicles)
     except NoResultFound:
         abort(404, 'A database result was required but none owner was found.')

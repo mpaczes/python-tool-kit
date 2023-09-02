@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Add user{% endblock %}</h1>
+  <h1>{% block title %}Add owner{% endblock %}</h1>
 {% endblock %}
 {% block content %}
-  <h2>We are going to add user</h2>
+  <h2>We are going to add owner</h2>
   <br/>
   <form method='POST'>
     {{ owner_form.hidden_tag() }}

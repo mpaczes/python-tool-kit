@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Owner details with assigned vehicles information{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+    <h2>Owner details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Owner id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Date of birth</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ owner.owner_id }}</td>
+                <td>{{ owner.first_name }}</td>
+                <td>{{ owner.last_name }}</td>
+                <td>{{ owner.email }}</td>
+                <td>{{ owner.date_of_birth }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Here are owner assigned vehicles</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Vehicle id</th>
+                <th>VIN number</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Date of build</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if owner_vehicles %}
+                {% for vehicle in owner_vehicles %}
+                    <tr>
+                        <td>{{ vehicle.vehicle_id }}</td>
+                        <td>{{ vehicle.vin_number }}</td>
+                        <td>{{ vehicle.brand }}</td>
+                        <td>{{ vehicle.model }}</td>
+                        <td>{{ vehicle.color }}</td>
+                        <td>{{ vehicle.date_of_build }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">There are no vehicles assigned to the owner {{ owner.first_name }} {{ owner.last_name }}</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

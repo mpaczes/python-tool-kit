@@ -5,11 +5,32 @@
 {% endblock %}
 
 {% block content %}
-    {% for owner in owners %}
-        {{ owner.owner_id }} | {{ owner.first_name }} | {{ owner.last_name }} |
-        {{ owner.date_of_birth }} | {{ owner.email }} |
-        <a href="{{ url_for('bp_owner.edit_user', owner_id=owner.owner_id) }}">edit</a> |
-        <a href="{{ url_for('bp_owner.delete_user', owner_id=owner.owner_id) }}">delete</a>
-        <br>
-    {% endfor %}
+    <table>
+        <thead>
+            <tr>
+                <th>Owner id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Date of birth</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for owner in owners %}
+                <tr>
+                    <td>{{ owner.owner_id }}</td>
+                    <td>{{ owner.first_name }}</td>
+                    <td>{{ owner.last_name }}</td>
+                    <td>{{ owner.date_of_birth }}</td>
+                    <td>{{ owner.email }}</td>
+                    <td>
+                        <a href="{{ url_for('bp_owner.edit_user', owner_id=owner.owner_id) }}">edit</a> |
+                        <a href="{{ url_for('bp_owner.delete_user', owner_id=owner.owner_id) }}" onclick="return confirm_delete()">delete</a> |
+                        <a href="{{ url_for('bp_owner.owner_details_with_vehicles', owner_id=owner.owner_id) }}">details</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
