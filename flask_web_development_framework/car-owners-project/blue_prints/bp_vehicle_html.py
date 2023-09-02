@@ -103,3 +103,13 @@ def edit_vehicle(vehicle_id):
                                        vehicle_id=vehicle_id, vehicle=vehicle)
     except NoResultFound:
         abort(404, 'A database result was required but none owner was found.')
+
+
+@bp_vehicle_html.route('/vehicles/vehicle_details/<int:vehicle_id>', methods=['GET'])
+def owner_details_with_vehicles(vehicle_id):
+    try:
+        vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
+        return render_template('bp_vehicle_template/vehicle_details_with_owner.html', vehicle=vehicle,
+                               vehicle_owner=vehicle.owner)
+    except NoResultFound:
+        abort(404, 'A database result was required but none vehicle was found.')

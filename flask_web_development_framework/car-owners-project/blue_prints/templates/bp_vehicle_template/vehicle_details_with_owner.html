@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Vehicle details with assigned owner information{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+    <h2>Vehicle details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Vehicle id</th>
+                <th>VIN number</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Date of build</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ vehicle.vehicle_id }}</td>
+                <td>{{ vehicle.vin_number }}</td>
+                <td>{{ vehicle.brand }}</td>
+                <td>{{ vehicle.model }}</td>
+                <td>{{ vehicle.color }}</td>
+                <td>{{ vehicle.date_of_build }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>Owner details</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Owner id</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Email</th>
+                <th>Date of birth</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ vehicle_owner.owner_id }}</td>
+                <td>{{ vehicle_owner.first_name }}</td>
+                <td>{{ vehicle_owner.last_name }}</td>
+                <td>{{ vehicle_owner.email }}</td>
+                <td>{{ vehicle_owner.date_of_birth }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

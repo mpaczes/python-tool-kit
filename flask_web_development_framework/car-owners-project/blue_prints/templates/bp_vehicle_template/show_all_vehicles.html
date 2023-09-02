@@ -31,7 +31,7 @@
                     <td>
                         <a href="{{ url_for('bp_vehicle.edit_vehicle', vehicle_id=vehicle.vehicle_id) }}">edit</a> |
                         <a href="{{ url_for('bp_vehicle.delete_vehicle', vehicle_id=vehicle.vehicle_id) }}" onclick="return confirm_delete()">delete</a> |
-                        <a href="">details</a>
+                        <a href="{{ url_for('bp_vehicle.owner_details_with_vehicles', vehicle_id=vehicle.vehicle_id) }}">details</a>
                     </td>
                 </tr>
             {% endfor %}
