@@ -13,7 +13,7 @@
                 <th>Brand</th>
                 <th>Model</th>
                 <th>Color</th>
-                <th>Dte of build</th>
+                <th>Date of build</th>
                 <th>Owner id</th>
                 <th>Actions</th>
             </tr>
@@ -27,10 +27,10 @@
                     <td>{{ vehicle.model }}</td>
                     <td>{{ vehicle.color }}</td>
                     <td>{{ vehicle.date_of_build }}</td>
-                    <td>{{  vehicle.owner_id }}</td>
+                    <td>{{ vehicle.owner_id }}</td>
                     <td>
-                        <a href="">edit</a> |
-                        <a href="" onclick="return confirm_delete()">delete</a> |
+                        <a href="{{ url_for('bp_vehicle.edit_vehicle', vehicle_id=vehicle.vehicle_id) }}">edit</a> |
+                        <a href="{{ url_for('bp_vehicle.delete_vehicle', vehicle_id=vehicle.vehicle_id) }}" onclick="return confirm_delete()">delete</a> |
                         <a href="">details</a>
                     </td>
                 </tr>

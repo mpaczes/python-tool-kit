@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Edit vehicle{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+  <h2>We are going to edit vehicle {{ vehicle.model }} {{ vehicle.brand }} (with id {{ vehicle_id }})</h2>
+  <br/>
+  <form method='POST'>
+    {{ vehicle_form.hidden_tag() }}
+
+    {{ vehicle_form.vin_number.label }}
+    {{ vehicle_form.vin_number(value=vehicle.vin_number) }}
+    <br/>
+    {{ vehicle_form.owners.label }}
+    {{ vehicle_form.owners(value=vehicle.owner_id) }}
+    <br/>
+    {{ vehicle_form.brand.label }}
+    {{ vehicle_form.brand(value=vehicle.brand, readonly=true) }}
+    <br/>
+    {{ vehicle_form.model.label }}
+    {{ vehicle_form.model(value=vehicle.model, readonly=true) }}
+    <br/>
+    {{ vehicle_form.color.label }}
+    {{ vehicle_form.color(value=vehicle.color) }}
+    <br/>
+    {{ vehicle_form.date_of_build.label }}
+    {{ vehicle_form.date_of_build(value=vehicle.date_of_build) }}
+    <br/>
+    {{ vehicle_form.submit() }}
+  </form>
+{% endblock %}

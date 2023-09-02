@@ -25,7 +25,6 @@ class VehicleForm(FlaskForm):
     owners = SelectField('Owners', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Save vehicle')
 
-
 @bp_vehicle_html.route('/vehicles/add_vehicle', methods=['GET', 'POST'])
 def add_vehicle():
     vehicle_form = VehicleForm()
@@ -60,3 +59,47 @@ def vehicle_list():
     vehicles = db.session.execute(db.select(Vehicle).order_by(Vehicle.brand, Vehicle.model)).scalars().all()
 
     return render_template('bp_vehicle_template/show_all_vehicles.html', vehicles=vehicles)
+
+
+@bp_vehicle_html.route('/vehicles/delete', methods=['GET'])
+def delete_vehicle():
+    try:
+        vehicle_id = request.args.get('vehicle_id')
+        vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
+        db.session.delete(vehicle)
+        db.session.commit()
+        flash('Vehicle has been deleted')
+        return redirect(url_for('bp_vehicle.vehicle_list'))
+    except NoResultFound:
+        abort(404, 'A database result was required but none vehicle was found.')
+
+
+@bp_vehicle_html.route('/vehicles/edit/<int:vehicle_id>', methods=['GET', 'POST'])
+def edit_vehicle(vehicle_id):
+    try:
+        vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
+        vehicle_form = VehicleForm()
+        owners = db.session.execute(db.select(Owner).order_by(Owner.last_name)).scalars().all()
+        vehicle_form.owners.choices = [(owner.owner_id, owner.first_name + ' ' + owner.last_name) for owner in owners]
+        if request.method == 'GET':
+            return render_template('bp_vehicle_template/edit_vehicle.html', vehicle_form=vehicle_form,
+                                   vehicle_id=vehicle_id, vehicle=vehicle)
+        elif request.method == 'POST':
+            if vehicle_form.validate_on_submit():
+                vehicle.vin_number = vehicle_form.vin_number.data
+                vehicle.color = vehicle_form.color.data
+                vehicle.date_of_build = vehicle_form.date_of_build.data
+                vehicle.owner_id = vehicle_form.owners.data
+                db.session.commit()
+
+                flash('Vehicle has been updated')
+
+                return redirect(url_for('bp_vehicle.vehicle_list'))
+            else:
+                flash('Looks like there was an error')
+                flash(vehicle_form.errors)
+
+                return render_template('bp_vehicle_template/edit_vehicle.html', vehicle_form=vehicle_form,
+                                       vehicle_id=vehicle_id, vehicle=vehicle)
+    except NoResultFound:
+        abort(404, 'A database result was required but none owner was found.')
