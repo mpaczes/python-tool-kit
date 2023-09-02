@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Show all vehicles{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Vehicle id</th>
+                <th>VIN number</th>
+                <th>Brand</th>
+                <th>Model</th>
+                <th>Color</th>
+                <th>Dte of build</th>
+                <th>Owner id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vehicle in vehicles %}
+                <tr>
+                    <td>{{ vehicle.vehicle_id }}</td>
+                    <td>{{ vehicle.vin_number }}</td>
+                    <td>{{ vehicle.brand }}</td>
+                    <td>{{ vehicle.model }}</td>
+                    <td>{{ vehicle.color }}</td>
+                    <td>{{ vehicle.date_of_build }}</td>
+                    <td>{{  vehicle.owner_id }}</td>
+                    <td>
+                        <a href="">edit</a> |
+                        <a href="" onclick="return confirm_delete()">delete</a> |
+                        <a href="">details</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

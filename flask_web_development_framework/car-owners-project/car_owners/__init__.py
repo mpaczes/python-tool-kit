@@ -53,9 +53,12 @@ def create_app(test_config=None):
     from blue_prints.bp_owner_api import bp_owner_api
     from blue_prints.bp_vehicle_api import bp_vehicle_api
     from blue_prints.bp_owner_html import bp_owner_html
+    from blue_prints.bp_vehicle_html import bp_vehicle_html
+
     app.register_blueprint(bp_owner_api)
     app.register_blueprint(bp_vehicle_api)
     app.register_blueprint(bp_owner_html)
+    app.register_blueprint(bp_vehicle_html)
 
     # ensure the instance folder exists
     try:
