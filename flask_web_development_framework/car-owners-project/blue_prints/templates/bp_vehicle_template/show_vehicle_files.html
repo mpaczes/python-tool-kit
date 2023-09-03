@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Show vehicle saved files{% endblock %}</h1>
+{% endblock %}
+{% block content %}
+  <h2>We are going to show vehicle files for vehicle {{ vehicle.model }} {{ vehicle.brand }} (with id {{ vehicle.vehicle_id }})</h2>
+
+  File id | File name | Additional text (description) abut file | Creation date | Actions
+  <br/>
+  {% for vehicle_file in vehicle_files %}
+    {{ vehicle_file.id }} | {{ vehicle_file.file_name }} | {{ vehicle_file.additional_text }} | {{ vehicle_file.creation_date }} | <span>download file</span>
+    <br/>
+  {% endfor %}
+{% endblock %}

@@ -1,10 +1,11 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response, jsonify, \
-    json, abort
+    json, abort, send_file  # Converst bytes into a file for downloads
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 from sqlalchemy.exc import NoResultFound
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, DateField, DateTimeField, SelectField
+from wtforms import StringField, SubmitField, DateField, DateTimeField, SelectField, TextAreaField, FileField
 from wtforms.validators import DataRequired, Email, Optional
 
 from datetime import datetime
@@ -12,6 +13,9 @@ from datetime import datetime
 from car_owners import db
 from models.vehicle import Vehicle
 from models.owner import Owner
+from models.file_content import FileContent
+
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'xls', 'xlsx'}
 
 bp_vehicle_html = Blueprint('bp_vehicle', __name__, url_prefix='/bp_vehicle_html', template_folder='templates')
 
@@ -24,6 +28,13 @@ class VehicleForm(FlaskForm):
     date_of_build = DateTimeField('Date of build', validators=[Optional()])
     owners = SelectField('Owners', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Save vehicle')
+
+
+class VehicleFileForm(FlaskForm):
+    additional_description = TextAreaField('Additional description', validators=[Optional()])
+    vehicle_file = FileField('Veficle file to upload', validators=[DataRequired()])
+    submit = SubmitField('Save vehicle file')
+
 
 @bp_vehicle_html.route('/vehicles/add_vehicle', methods=['GET', 'POST'])
 def add_vehicle():
@@ -112,4 +123,45 @@ def owner_details_with_vehicles(vehicle_id):
         return render_template('bp_vehicle_template/vehicle_details_with_owner.html', vehicle=vehicle,
                                vehicle_owner=vehicle.owner)
     except NoResultFound:
+        abort(404, 'A database result was required but none vehicle was found.')
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@bp_vehicle_html.route('/vehicles/upload_file/<int:vehicle_id>', methods=['GET', 'POST'])
+def upload_file(vehicle_id):
+    vehicle_file_form = VehicleFileForm()
+    if request.method == 'POST':
+        if 'vehicle_file' not in request.files:
+            flash('No file part for vehicle')
+            return redirect(request.url)
+        vehicle_file = request.files['vehicle_file']
+        # If the user does not select a file, the browser submits an empty file without a filename.
+        if vehicle_file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if vehicle_file and allowed_file(vehicle_file.filename):
+            file_name = secure_filename(vehicle_file.filename)
+            data = vehicle_file.read()
+            additional_text = vehicle_file_form.additional_description.data
+            new_file = FileContent(file_name=file_name, data=data, additional_text=additional_text,
+                                   vehicle_id=vehicle_id)
+            new_file.creation_date = datetime.now()
+            db.session.add(new_file)
+            db.session.commit()
+            flash('Uploaded file has been saved in the database')
+            return redirect(url_for('bp_vehicle.vehicle_files', vehicle_id=vehicle_id))
+    elif request.method == 'GET':
+        return render_template('bp_vehicle_template/upload_file_for_vehicle.html', vehicle_file_form=vehicle_file_form)
+
+
+@bp_vehicle_html.route('/vehicles/files/<int:vehicle_id>', methods=['GET'])
+def vehicle_files(vehicle_id):
+    try:
+        vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
+        vehicle_files_from_db = db.session.execute(db.select(FileContent).where(FileContent.vehicle_id == vehicle_id).order_by(FileContent.creation_date)).scalars().all()
+        return render_template('bp_vehicle_template/show_vehicle_files.html', vehicle_files=vehicle_files_from_db, vehicle=vehicle)
+    except:
         abort(404, 'A database result was required but none vehicle was found.')
