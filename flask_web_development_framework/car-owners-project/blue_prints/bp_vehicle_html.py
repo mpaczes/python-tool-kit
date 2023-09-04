@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for, make_response, jsonify, \
     json, abort, send_file  # Converst bytes into a file for downloads
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -149,6 +151,8 @@ def upload_file(vehicle_id):
             new_file = FileContent(file_name=file_name, data=data, additional_text=additional_text,
                                    vehicle_id=vehicle_id)
             new_file.creation_date = datetime.now()
+            new_file.file_mime_type = vehicle_file.content_type
+            new_file.file_content_length = vehicle_file.content_length
             db.session.add(new_file)
             db.session.commit()
             flash('Uploaded file has been saved in the database')
@@ -163,5 +167,14 @@ def vehicle_files(vehicle_id):
         vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
         vehicle_files_from_db = db.session.execute(db.select(FileContent).where(FileContent.vehicle_id == vehicle_id).order_by(FileContent.creation_date)).scalars().all()
         return render_template('bp_vehicle_template/show_vehicle_files.html', vehicle_files=vehicle_files_from_db, vehicle=vehicle)
-    except:
+    except NoResultFound:
         abort(404, 'A database result was required but none vehicle was found.')
+
+
+@bp_vehicle_html.route('/vehicles/download_file/<int:file_id>', methods=['GET'])
+def download_file(file_id):
+    try:
+        file_to_download = db.session.execute(db.select(FileContent).where(FileContent.id == file_id)).scalars().one()
+        return send_file(BytesIO(file_to_download.data), mimetype=file_to_download.file_mime_type, as_attachment=True, download_name=file_to_download.file_name)
+    except NoResultFound:
+        abort(404, 'A database result was required but none file was found.')

@@ -9,3 +9,5 @@ class FileContent(db.Model):
     data = db.Column(db.LargeBinary, nullable=False)        # Actual data, needed for Download
     additional_text = db.Column(db.Text, nullable=True)
     creation_date = db.Column(db.DateTime, nullable=False)
+    file_mime_type = db.Column(db.String, nullable=True)
+    file_content_length = db.Column(db.Integer, nullable=True)
