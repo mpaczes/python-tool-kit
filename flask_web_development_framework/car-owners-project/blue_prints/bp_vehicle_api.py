@@ -157,3 +157,14 @@ def user_update(vehicle_id):
         return make_response('Vehicle has been updated', 200)
     except NoResultFound:
         abort(404, 'A database result was required but none vehicle was found.')
+
+
+@bp_vehicle_api.route('/vehicles/all_vin_numbers', methods=['GET'])
+def get_all_vehicles_vin_numbers():
+    all_vin_numbers = db.session.execute(db.select(Vehicle.vin_number).order_by(Vehicle.vin_number)).scalars().all()
+
+    vin_numbers_as_list = list()
+    for vin_number in all_vin_numbers:
+        vin_numbers_as_list.append(vin_number)
+
+    return make_response(vin_numbers_as_list, 200)
