@@ -48,6 +48,25 @@ def vehicle_list():
     return make_response(vehicles_as_dict, 200)
 
 
+@bp_vehicle_api.route('/vehicles/<int:vehicle_id>', methods=['GET'])
+def vehicle_single_by_vehicle_id(vehicle_id):
+    try:
+        vehicle = db.session.execute(db.select(Vehicle).where(Vehicle.vehicle_id == vehicle_id)).scalars().one()
+
+        vehicle_as_dict = dict()
+        vehicle_as_dict['vehicle_id'] = vehicle.vehicle_id
+        vehicle_as_dict['vin_number'] = vehicle.vin_number
+        vehicle_as_dict['owner_id'] = vehicle.owner_id
+        vehicle_as_dict['brand'] = vehicle.brand
+        vehicle_as_dict['model'] = vehicle.model
+        vehicle_as_dict['color'] = vehicle.color
+        vehicle_as_dict['date_of_build'] = vehicle.date_of_build
+
+        return make_response(vehicle_as_dict, 200)
+    except NoResultFound:
+        abort(404, 'A database result was required but none vehicle was found.')
+
+
 @bp_vehicle_api.route('/vehicles/vin_number/<string:vin_number>', methods=['GET'])
 def vehicle_single_by_vin_number(vin_number):
     try:
@@ -118,12 +137,20 @@ def user_update(vehicle_id):
         vin_number = data.get('vin_number', None)
         color = data.get('color', None)
         owner_id = data.get('owner_id', None)
+        
+        date_of_build = data.get('date_of_build', None)     # '1990-01-17'
+        formatted_date_of_build = None
+        if date_of_build:
+            formatted_date_of_build = datetime.strptime(date_of_build, '%Y-%m-%d')
+        
         if vin_number:
             vehicle.vin_number = vin_number
         if color:
             vehicle.color = color
         if owner_id:
             vehicle.owner_id = owner_id
+        if formatted_date_of_build:
+            vehicle.date_of_build = formatted_date_of_build
 
         db.session.commit()
 
