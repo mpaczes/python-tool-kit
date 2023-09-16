@@ -132,3 +132,33 @@ def user_update(owner_id):
 
     except NoResultFound:
         abort(404, 'A database result was required but none owner was found.')
+
+
+@bp_owner_api.route('/owners/assigned_vehicles', methods=['GET'])
+def owner_vehicles():
+    owners = db.session.execute(db.select(Owner).order_by(Owner.last_name)).scalars().all()
+
+    owners_as_dict = list()
+    for owner in owners:
+        owner_dict = dict()
+        owner_dict['owner_id'] = owner.owner_id
+        owner_dict['first_name'] = owner.first_name
+        owner_dict['last_name'] = owner.last_name
+        owner_dict['date_of_birth'] = owner.date_of_birth
+        owner_dict['email'] = owner.email
+        if owner.vehicles:
+            owner_dict['vehicles'] = list()
+            for vehicle in owner.vehicles:
+                vehicle_dict = dict()
+                vehicle_dict['vehicle_id'] = vehicle.vehicle_id
+                vehicle_dict['brand'] = vehicle.brand
+                vehicle_dict['model'] = vehicle.model
+                vehicle_dict['color'] = vehicle.color
+                vehicle_dict['date_of_build'] = vehicle.date_of_build
+                vehicle_dict['vin_number'] = vehicle.vin_number
+
+                owner_dict['vehicles'].append(vehicle_dict)
+
+        owners_as_dict.append(owner_dict)
+
+    return make_response(owners_as_dict, 200)
